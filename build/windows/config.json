@@ -1,9 +1,9 @@
 {
   "sites": [
     {
-      "name": "sud",
-      "folder": "sites\\sud",
-      "port": 56323,
+      "name": "l",
+      "folder": "sites\\l",
+      "port": 60750,
       "entryFile": "index.html",
       "lastStarted": "0001-01-01T00:00:00Z"
     }

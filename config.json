@@ -1,0 +1,15 @@
+{
+  "sites": [
+    {
+      "name": "om",
+      "folder": "sites\\om",
+      "port": 64023,
+      "entryFile": "index.html",
+      "lastStarted": "0001-01-01T00:00:00Z"
+    }
+  ],
+  "appSettings": {
+    "autoPortMin": 8000,
+    "autoPortMax": 9000
+  }
+}
