@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Shinobi Web Server
+Comment=Manage multiple web servers
+Exec=/usr/local/bin/shinobi-webserver
+Icon=utilities-terminal
+Terminal=false
+Type=Application
+Categories=Utility;WebDevelopment;

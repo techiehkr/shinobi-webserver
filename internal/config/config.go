@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"net"
 	"os"
 	"path/filepath"
 	"time"
@@ -63,6 +64,11 @@ func (c *Config) Save() error {
 }
 
 func (c *Config) AddSite(site Site) error {
+	// Validate port
+	if !c.IsPortAvailable(site.Port) {
+		return fmt.Errorf("port %d is already in use", site.Port)
+	}
+
 	// Create site folder
 	if err := os.MkdirAll(site.Folder, 0755); err != nil {
 		return err
@@ -80,10 +86,53 @@ func (c *Config) AddSite(site Site) error {
 <html>
 <head>
     <title>` + site.Name + `</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        .status {
+            background: rgba(0, 255, 0, 0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            margin-top: 20px;
+            display: inline-block;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to ` + site.Name + `</h1>
-    <p>Your site is running on port ` + fmt.Sprintf("%d", site.Port) + `</p>
+    <div class="container">
+        <h1>🚀 ` + site.Name + `</h1>
+        <p>Your site is running successfully!</p>
+        <p>Server Port: <strong>` + fmt.Sprintf("%d", site.Port) + `</strong></p>
+        <p>Local URL: <strong>http://localhost:` + fmt.Sprintf("%d", site.Port) + `</strong></p>
+        <div class="status">
+            ✅ Site is online and ready
+        </div>
+    </div>
 </body>
 </html>`
 
@@ -122,4 +171,31 @@ func (c *Config) GetSite(name string) *Site {
 		}
 	}
 	return nil
+}
+
+func (c *Config) IsPortAvailable(port int) bool {
+	// Check if port is already used by other sites
+	for _, site := range c.Sites {
+		if site.Port == port {
+			return false
+		}
+	}
+
+	// Check if port is available on system
+	addr := fmt.Sprintf(":%d", port)
+	listener, err := net.Listen("tcp", addr)
+	if err != nil {
+		return false
+	}
+	listener.Close()
+	return true
+}
+
+func (c *Config) GetAvailablePort() (int, error) {
+	for port := c.AppSettings.AutoPortMin; port <= c.AppSettings.AutoPortMax; port++ {
+		if c.IsPortAvailable(port) {
+			return port, nil
+		}
+	}
+	return 0, fmt.Errorf("no available ports in range %d-%d", c.AppSettings.AutoPortMin, c.AppSettings.AutoPortMax)
 }

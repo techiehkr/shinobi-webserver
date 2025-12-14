@@ -1,0 +1,9 @@
+Package: shinobi-webserver
+Version: 1.0.0
+Section: web
+Priority: optional
+Architecture: amd64
+Maintainer: Shinobi codeer0@gmail.com
+Depends: libc6
+Description: Simple multi-site web server manager
+ A lightweight web server manager for running multiple static sites locally.

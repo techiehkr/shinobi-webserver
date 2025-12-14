@@ -1,9 +1,13 @@
-# Build with static linking to include all dependencies
-$env:CGO_ENABLED = "1"
-$env:CC = "gcc"
-$env:CGO_LDFLAGS = "-static"
+# Create build directory
+mkdir -p build\windows
 
-go build -ldflags="-s -w" -o build/windows/shinobi-static.exe ./cmd/site-manager
+# Build with different architectures
+# 64-bit Windows (most common)
+set GOOS=windows
+set GOARCH=amd64
+go build -ldflags="-s -w" -o build/windows/shinobi-webserver.exe ./cmd/site-manager
 
-# Test the static version
-.\build\windows\shinobi-static.exe
+# 32-bit Windows (older systems)
+set GOARCH=386
+go build -ldflags="-s -w" -o build/windows/shinobi-webserver-32bit.exe ./cmd/site-manager
+
